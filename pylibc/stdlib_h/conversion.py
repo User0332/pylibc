@@ -1,25 +1,32 @@
 from ..constants import *
+from ..typedefs import *
 from .._typecheck import getbuff
 
-def atof(s: str) -> float:
-	s = getbuff(s)
+def _convert(s: str, func):
+	try:
+		return func(getbuff(s))
+	except ValueError:
+		return 0
 
-	return float(s)
+
+def atof(s: str) -> float:
+	return _convert(s, float)
 
 def atoi(s: str) -> int:
-	s = getbuff(s)
+	return _convert(s, int)
 
-	return int(s)
+def atol(s: str) -> long_int:
+	return _convert(s, long_int)
 
-def pystrtol(s: str, base: int = 10) -> int:
+def pystrtol(s: str, base: int = 10) -> long_int:
 	s = getbuff(s)
 
 	if not isinstance(base, int):
 		raise TypeError("strtoi() argument 'base' must be an integer")
 
-	return int(s, base)
+	return long_int(s, base)
 
-def pystrtoul(s: str, base: int = 10) -> int:
+def pystrtoul(s: str, base: int = 10) -> uint:
 	s = getbuff(s)
 
 	if not isinstance(base, int):
@@ -27,7 +34,7 @@ def pystrtoul(s: str, base: int = 10) -> int:
 
 	return int(s, base)+(2**32) #convert int to unsigned int
 
-def cstrtol(s: str, endptr: list, base: int = 10) -> int:
+def cstrtol(s: str, endptr: list, base: int = 10) -> long_int:
 	to_convert = ""
 	
 	s = getbuff(s)
@@ -51,9 +58,9 @@ def cstrtol(s: str, endptr: list, base: int = 10) -> int:
 
 	if not endptr: endptr.append(NULL)
 
-	return int(to_convert, base)
+	return long_int(to_convert, base)
 
-def cstrtoul(s: str, endptr: list, base: int = 10) -> int:
+def cstrtoul(s: str, endptr: list, base: int = 10) -> uint:
 	to_convert = ""
 
 	s = getbuff(s)

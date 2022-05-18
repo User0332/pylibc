@@ -4,6 +4,7 @@ from ..typedefs import *
 from ..constants import *
 from ..exceptions import SegmentationFault
 
+
 def bsearch(key: list, base: list, num: size_t, size: size_t, compar: FunctionType) -> list:
 	'''Perform a binary search in an array. Note that the argument 'size' is required for uniformity but never used.'''
 
@@ -19,10 +20,10 @@ def bsearch(key: list, base: list, num: size_t, size: size_t, compar: FunctionTy
 	if not isinstance(size, size_t):
 		raise TypeError("bsearch() argument 'size' must be a size_t")
 
-	if not isinstance(compar, bsearch.__class__):
+	if not isinstance(compar, FunctionType):
 		raise TypeError("bsearch() argument 'compar' must be a function pointer")
 
-	if num > len(base)-1: raise SegmentationFault()
+	if num > len(base): raise SegmentationFault()
 	arr = deepcopy(base[:num])
 
 	while arr:
@@ -54,10 +55,10 @@ def qsort(base: list, num: size_t, size: size_t, compar: FunctionType) -> None:
 	if not isinstance(size, size_t):
 		raise TypeError("qsort() argument 'size' must be a size_t")
 
-	if not isinstance(compar, bsearch.__class__):
+	if not isinstance(compar, FunctionType):
 		raise TypeError("qsort() argument 'compar' must be a function pointer")
 
-	if num > len(base)-1: raise SegmentationFault()
+	if num > len(base): raise SegmentationFault()
 
 	_sorted = sorted(base[:num], key=compar)
 

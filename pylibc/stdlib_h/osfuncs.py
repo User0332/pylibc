@@ -1,5 +1,6 @@
 from types import FunctionType
 from .._typecheck import getbuff
+from ..constants import *
 import os
 import atexit as _atexit
 
@@ -10,12 +11,12 @@ def exit(status: int):
 	os._exit(status)
 
 def abort():
-	os._exit(1)
+	os._exit(EXIT_FAILURE)
 
 def getenv(name: str) -> str:
 	string = getbuff(name)
 
-	return os.environ.get(name)
+	return os.environ.get(name, NULL)
 
 def system(string: str) -> int:
 	string = getbuff(string)

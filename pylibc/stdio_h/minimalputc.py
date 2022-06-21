@@ -3,9 +3,9 @@ from ..typedefs import *
 import sys
 
 def putchar(char: int):
-	return fputc(char, sys.stdout)
+	return putc(char, sys.stdout)
 
-def fputc(char: int, stream: FILE) -> int:
+def putc(char: int, stream: FILE) -> int:
 	if not isinstance(stream, IOBase):
 		raise TypeError("invalid file stream")
 

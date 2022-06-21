@@ -2,6 +2,7 @@ from io import IOBase
 from ..typedefs import *
 from .._typecheck import getbuff
 import sys
+import random
 
 def printf(_Format: str, *varargs, USE_ONLY_KNOWN_FORMAT_SPECIFIERS=False, WARNINGS=False) -> int:
 	return vprintf(_Format, list(varargs), USE_ONLY_KNOWN_FORMAT_SPECIFIERS=USE_ONLY_KNOWN_FORMAT_SPECIFIERS, WARNINGS=WARNINGS)
@@ -16,6 +17,7 @@ def vfprintf(stream: FILE, _Format: str, arg: list[str], *, USE_ONLY_KNOWN_FORMA
 	va_list_counter = 0
 	format_encountered = False
 	writestr = ""
+	rand_arg = False
 
 	if not isinstance(stream, IOBase):
 		raise TypeError("invalid file stream")
@@ -25,23 +27,30 @@ def vfprintf(stream: FILE, _Format: str, arg: list[str], *, USE_ONLY_KNOWN_FORMA
 			if char == "%":
 				writestr+="%"
 			else:
-				if va_list_counter >= len(arg):
-					raise ValueError("More format specifiers than varaibles passed to printf")
-			
-				var = arg[va_list_counter]	
+				if va_list_counter >= len(arg) and WARNINGS:
+					rand_arg = True
+				else:
+					var = arg[va_list_counter]	
 				
 				if char == "s":
+					if rand_arg:
+						var = ''.join([chr(random.randint(0, 5000)) for x in range(random.randint(7, 32))])
 					var = getbuff(var, err="Format specifier %s expects a string argument")
 				elif char == "i":
-					if not isinstance(var, int):
+					if rand_arg:
+						var = random.randint(0, 5000)
+					elif not isinstance(var, int):
 						raise ValueError("Format specifier %i expects an integer argument")
 				elif char in ("d", "f"):
-					if not isinstance(var, float):
+					if rand_arg:
+						var = random.uniform(0, 10000)
+					elif not isinstance(var, float):
 						raise ValueError(f"Format specifier %{char} expects a floating-point number argument")
 				elif char == "c":
-					if not ((isinstance(var, str)) and (len(var) == 1)) and (not isinstance(var, int)):
+					if rand_arg:
+						var = chr(random.randint(0, 5000))
+					elif not ((isinstance(var, str)) and (len(var) == 1)) and (not isinstance(var, int)):
 						raise ValueError("Format specifier %c expects a character argument")
-
 					if isinstance(var, int):
 						var = chr(var)
 				elif char == " ":
@@ -49,6 +58,9 @@ def vfprintf(stream: FILE, _Format: str, arg: list[str], *, USE_ONLY_KNOWN_FORMA
 				elif USE_ONLY_KNOWN_FORMAT_SPECIFIERS:
 					raise ValueError(f"Unknown format '%{char}'")
 				
+				if rand_arg:
+					rand_arg = False
+					
 				writestr+=str(var)
 				va_list_counter+=1
 
